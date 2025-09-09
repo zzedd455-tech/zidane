@@ -1,0 +1,211 @@
+{% extends 'core/base.html' %}
+
+{% block title %}الرئيسية - الموقع التعليمي{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">مرحباً بك في الموقع التعليمي</h1>
+                <p class="lead mb-4">منصة تعليمية شاملة تضم مجموعة واسعة من المواد الدراسية والفيديوهات التعليمية والمقالات المفيدة لمساعدتك في رحلتك التعليمية.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'core:course_list' %}" class="btn btn-light btn-lg">
+                        <i class="bi bi-book-fill me-2"></i>تصفح المواد
+                    </a>
+                    <a href="{% url 'core:video_list' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-play-circle-fill me-2"></i>شاهد الفيديوهات
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-image">
+                    <i class="bi bi-mortarboard-fill" style="font-size: 15rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-card">
+                    <i class="bi bi-book-fill text-primary fs-1 mb-3"></i>
+                    <div class="stats-number">{{ recent_courses|length }}+</div>
+                    <p class="mb-0">مادة دراسية</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-card">
+                    <i class="bi bi-play-circle-fill text-success fs-1 mb-3"></i>
+                    <div class="stats-number">{{ recent_videos|length }}+</div>
+                    <p class="mb-0">فيديو تعليمي</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-card">
+                    <i class="bi bi-newspaper text-warning fs-1 mb-3"></i>
+                    <div class="stats-number">{{ recent_posts|length }}+</div>
+                    <p class="mb-0">مقال مفيد</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-card">
+                    <i class="bi bi-people-fill text-info fs-1 mb-3"></i>
+                    <div class="stats-number">1000+</div>
+                    <p class="mb-0">طالب مسجل</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Courses Section -->
+{% if recent_courses %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title">أحدث المواد الدراسية</h2>
+        <div class="row g-4">
+            {% for course in recent_courses %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    {% if course.image %}
+                        <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-book-fill text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        <p class="card-text flex-grow-1">{{ course.description|truncatewords:20 }}</p>
+                        <div class="mt-auto">
+                            <a href="{% url 'core:course_detail' course.pk %}" class="btn btn-primary">
+                                <i class="bi bi-arrow-left me-2"></i>عرض التفاصيل
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'core:course_list' %}" class="btn btn-outline-primary btn-lg">
+                عرض جميع المواد <i class="bi bi-arrow-left ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Recent Videos Section -->
+{% if recent_videos %}
+<section class="py-5 bg-white">
+    <div class="container">
+        <h2 class="section-title">أحدث الفيديوهات التعليمية</h2>
+        <div class="row g-4">
+            {% for video in recent_videos %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    {% if video.thumbnail %}
+                        <img src="{{ video.thumbnail.url }}" class="card-img-top" alt="{{ video.title }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-play-circle-fill text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ video.title }}</h5>
+                        <p class="card-text text-muted mb-2">
+                            <i class="bi bi-book me-1"></i>{{ video.course.title }}
+                        </p>
+                        {% if video.duration %}
+                            <p class="card-text text-muted mb-2">
+                                <i class="bi bi-clock me-1"></i>{{ video.duration }}
+                            </p>
+                        {% endif %}
+                        <p class="card-text flex-grow-1">{{ video.description|truncatewords:15 }}</p>
+                        <div class="mt-auto">
+                            <a href="{% url 'core:video_detail' video.pk %}" class="btn btn-success">
+                                <i class="bi bi-play-fill me-2"></i>مشاهدة الفيديو
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'core:video_list' %}" class="btn btn-outline-success btn-lg">
+                عرض جميع الفيديوهات <i class="bi bi-arrow-left ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Recent Posts Section -->
+{% if recent_posts %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title">أحدث المقالات</h2>
+        <div class="row g-4">
+            {% for post in recent_posts %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-newspaper text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text text-muted mb-2">
+                            <i class="bi bi-calendar me-1"></i>{{ post.created_at|date:"d M Y" }}
+                            {% if post.author %}
+                                <i class="bi bi-person me-1 ms-3"></i>{{ post.author.get_full_name|default:post.author.username }}
+                            {% endif %}
+                        </p>
+                        <p class="card-text flex-grow-1">{{ post.excerpt|truncatewords:20 }}</p>
+                        <div class="mt-auto">
+                            <a href="{% url 'core:post_detail' post.pk %}" class="btn btn-warning">
+                                <i class="bi bi-arrow-left me-2"></i>قراءة المقال
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'core:post_list' %}" class="btn btn-outline-warning btn-lg">
+                عرض جميع المقالات <i class="bi bi-arrow-left ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">ابدأ رحلتك التعليمية اليوم</h2>
+        <p class="lead mb-4">انضم إلى آلاف الطلاب الذين يتعلمون معنا واكتشف عالماً من المعرفة والتطوير</p>
+        <div class="search-form">
+            <form method="GET" action="{% url 'core:search' %}" class="d-flex gap-2">
+                <input type="text" name="q" class="form-control" placeholder="ابحث عن مادة أو موضوع...">
+                <button type="submit" class="btn btn-light">
+                    <i class="bi bi-search me-2"></i>بحث
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

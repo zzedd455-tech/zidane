@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card mb-4">
+                {% if video.thumbnail %}
+                    <img src="{{ video.thumbnail.url }}" class="card-img-top" alt="{{ video.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h3 class="card-title">{{ video.title }}</h3>
+                    <p class="card-text text-muted mb-2">
+                        <i class="bi bi-book me-1"></i>{{ video.course.title }}
+                        {% if video.duration %} | <i class="bi bi-clock me-1"></i>{{ video.duration }}{% endif %}
+                    </p>
+                    <p class="card-text">{{ video.description }}</p>
+                        <div class="ratio ratio-16x9 mb-3">
+                            <iframe src="{{ video_url }}" title="{{ video.title }}" allowfullscreen></iframe>
+                        </div>
+                    <p class="card-text text-muted">
+                        <i class="bi bi-eye me-1"></i>{{ video.views_count }} مشاهدة
+                        {% if video.author %} | <i class="bi bi-person me-1"></i>{{ video.author.username }}{% endif %}
+                        | <i class="bi bi-calendar me-1"></i>{{ video.created_at|date:"Y-m-d" }}
+                    </p>
+                </div>
+            </div>
+            {% if related_videos %}
+            <h4 class="mb-3">فيديوهات ذات صلة</h4>
+            <div class="row g-3">
+                {% for v in related_videos %}
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        {% if v.thumbnail %}
+                            <img src="{{ v.thumbnail.url }}" class="card-img-top" alt="{{ v.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title">{{ v.title }}</h6>
+                            <a href="{% url 'core:video_detail' v.pk %}" class="btn btn-outline-success btn-sm w-100">مشاهدة</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
